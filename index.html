@@ -1,3 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jenkins Pipeline Animation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .step {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            opacity: 0; /* Start hidden */
+            transition: opacity 1s; /* Fade in */
+        }
+        .step.active {
+            opacity: 1; /* Show when active */
+        }
+        #nextBtn {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
 
+<h1>Creating a Jenkins Pipeline for Docker Swarm</h1>
 
-<h1>hii </h1>
+<div id="steps">
+    <div class="step active">
+        <h2>Step 1: Create a New Jenkins Pipeline</h2>
+        <pre>pipeline { agent any }</pre>
+    </div>
+    <div class="step">
+        <h2>Step 2: Define Stages</h2>
+        <pre>
+stages {
+    stage('Build Docker Image') {
+        steps {
+            echo 'Building Docker image...'
+        }
+    }
+}
+        </pre>
+    </div>
+    <div class="step">
+        <h2>Step 3: Add Credentials Management</h2>
+        <pre>
+stage('Docker Login') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+        }
+    }
+}
+        </pre>
+    </div>
+    <div class="step">
+        <h2>Step 4: Add Push and Deployment Steps</h2>
+        <pre>
+stage('Push Docker Image') {
+    steps {
+        sh 'docker push maya2711/myweb'
+    }
+}
+        </pre>
+    </div>
+    <div class="step">
+        <h2>Step 5: Add Post Actions</h2>
+        <pre>
+post {
+    success {
+        echo 'Pipeline completed successfully!'
+    }
+}
+        </pre>
+    </div>
+</div>
+
+<button id="nextBtn">Next Step</button>
+
+<script>
+    const steps = document.querySelectorAll('.step');
+    let currentStep = 0;
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (currentStep < steps.length - 1) {
+            steps[currentStep].classList.remove('active');
+            currentStep++;
+            steps[currentStep].classList.add('active');
+        } else {
+            alert('All steps completed!');
+        }
+    });
+</script>
+
+</body>
+</html>
+
