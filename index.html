@@ -53,57 +53,170 @@ stages {
         }
     }
 }
-        </pre>
-    </div>
-    <div class="step">
-        <h2>Step 3: Add Credentials Management</h2>
-        <pre>
-stage('Docker Login') {
-    steps {
-        withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Test Preparation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
         }
-    }
-}
-        </pre>
-    </div>
-    <div class="step">
-        <h2>Step 4: Add Push and Deployment Steps</h2>
-        <pre>
-stage('Push Docker Image') {
-    steps {
-        sh 'docker push maya2711/myweb'
-    }
-}
-        </pre>
-    </div>
-    <div class="step">
-        <h2>Step 5: Add Post Actions</h2>
-        <pre>
-post {
-    success {
-        echo 'Pipeline completed successfully!'
-    }
-}
-        </pre>
-    </div>
+        h1 {
+            color: #333;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .options label {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .options input {
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            display: none;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        .correct {
+            color: green;
+        }
+        .wrong {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Aptitude Test</h1>
+
+<div class="quiz-container" id="quiz-container">
+    <div class="question" id="question">Question text</div>
+    <div class="options" id="options"></div>
+    <button id="submitBtn">Submit Answer</button>
+    <div id="result"></div>
 </div>
 
-<button id="nextBtn">Next Step</button>
-
 <script>
-    const steps = document.querySelectorAll('.step');
-    let currentStep = 0;
-
-    document.getElementById('nextBtn').addEventListener('click', () => {
-        if (currentStep < steps.length - 1) {
-            steps[currentStep].classList.remove('active');
-            currentStep++;
-            steps[currentStep].classList.add('active');
-        } else {
-            alert('All steps completed!');
+    const questions = [
+        {
+            question: "What is the sum of 10 + 5?",
+            options: ["10", "12", "15", "18"],
+            correctAnswer: "15"
+        },
+        {
+            question: "What is 6 multiplied by 7?",
+            options: ["36", "42", "48", "49"],
+            correctAnswer: "42"
+        },
+        {
+            question: "What is the square root of 64?",
+            options: ["6", "7", "8", "9"],
+            correctAnswer: "8"
+        },
+        {
+            question: "Which number is a prime number?",
+            options: ["4", "6", "9", "7"],
+            correctAnswer: "7"
         }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+        const resultElement = document.getElementById("result");
+
+        // Clear previous result and options
+        resultElement.style.display = "none";
+        optionsElement.innerHTML = "";
+
+        // Load new question
+        questionElement.textContent = questions[currentQuestion].question;
+        questions[currentQuestion].options.forEach(option => {
+            const label = document.createElement("label");
+            label.innerHTML = `<input type="radio" name="option" value="${option}"> ${option}`;
+            optionsElement.appendChild(label);
+        });
+    }
+
+    document.getElementById("submitBtn").addEventListener("click", function() {
+        const selectedOption = document.querySelector('input[name="option"]:checked');
+        const resultElement = document.getElementById("result");
+
+        if (!selectedOption) {
+            alert("Please select an answer!");
+            return;
+        }
+
+        const answer = selectedOption.value;
+        if (answer === questions[currentQuestion].correctAnswer) {
+            score++;
+            resultElement.textContent = "Correct!";
+            resultElement.className = "correct";
+        } else {
+            resultElement.textContent = `Wrong! The correct answer was ${questions[currentQuestion].correctAnswer}.`;
+            resultElement.className = "wrong";
+        }
+
+        resultElement.style.display = "block";
+
+        // Load next question after a delay
+        setTimeout(() => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showFinalScore();
+            }
+        }, 1000);
     });
+
+    function showFinalScore() {
+        const quizContainer = document.getElementById("quiz-container");
+        quizContainer.innerHTML = `<h2>Your Score: ${score} / ${questions.length}</h2>`;
+    }
+
+    // Load the first question when the page loads
+    loadQuestion();
 </script>
 
 </body>
